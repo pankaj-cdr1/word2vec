@@ -498,7 +498,15 @@ void *TrainModelThread(void *id) {
           else if (f >= MAX_EXP) continue;
           else f = expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))];
           // 'g' is the gradient multiplied by the learning rate
-          g = (1 - vocab[word].code[d] - f) * alpha;
+          //g = (1 - vocab[word].code[d] - f) * alpha;
+          //g = (1-vocab[word].code[d]-f)*f*(1.0-f)*alpha;
+          if (vocab[word].code[d]) {
+            g = -f*f*alpha;
+          } else {
+            g = (1-f)*(1-f)*alpha;
+          }
+          
+          //printf("%f\n",g );
           // Propagate errors output -> hidden
           for (c = 0; c < layer1_size; c++) neu1e[c] += g * syn1[c + l2];
           // Learn weights hidden -> output
