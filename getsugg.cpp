@@ -314,7 +314,7 @@ int sameFreebaseCategory(string a, string b)
 	quer[i] = 0;
 	res2 = exec(quer);
 
-	return res1 == res2;
+	return res1 == res2 && res1.length() > 0 && res2.length() > 0;
 }
 int main(int argc, char const *argv[])
 {
@@ -343,7 +343,18 @@ int main(int argc, char const *argv[])
 		while (ss>>s) {
 			//if (tag.find("nn") != string::npos) {
 			//if (!isNLTKnoun(s)) continue; //Dictionary not working correctly !
-			vs = getSuggestions(s.c_str());
+			if (isFreebaseNoun(s)) {
+				vs = getSuggestions(s.c_str());
+				for(int i = 0; i < vs.size(); i++) {
+					newstr = nounstr;
+					if (!sameFreebaseCategory(s, vs[i])) continue;
+					boost::replace_all(newstr, s, vs[i]);
+					//print(newstr);
+					//cout<<"Replacing "<<s<<" with "<<vs[i]<<" : "<<newstr<<endl;
+					cout<<finstr<<","<<nounstr<<","<<s<<","<<vs[i]<<","<<newstr<<endl;
+				}
+			}
+			vs = getFreebaseSuggestions(s);
 			for(int i = 0; i < vs.size(); i++) {
 				newstr = nounstr;
 				if (!sameFreebaseCategory(s, vs[i])) continue;
@@ -351,19 +362,7 @@ int main(int argc, char const *argv[])
 				//print(newstr);
 				//cout<<"Replacing "<<s<<" with "<<vs[i]<<" : "<<newstr<<endl;
 				cout<<finstr<<","<<nounstr<<","<<s<<","<<vs[i]<<","<<newstr<<endl;
-			}
-			if (isFreebaseNoun(s)) {
-				vs = getFreebaseSuggestions(s);
-				for(int i = 0; i < vs.size(); i++) {
-					newstr = nounstr;
-					//if (!sameFreebaseCategory(s, vs[i])) continue;
-					boost::replace_all(newstr, s, vs[i]);
-					//print(newstr);
-					//cout<<"Replacing "<<s<<" with "<<vs[i]<<" : "<<newstr<<endl;
-					cout<<finstr<<","<<nounstr<<","<<s<<","<<vs[i]<<","<<newstr<<endl;
-				}
-			}
-			
+			}	
 		}
 		//cout<<"---------------"<<endl;
 	}
